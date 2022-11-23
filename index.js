@@ -45,6 +45,50 @@ app.post("/usuarios", async (req,resp) => {
         confirmar: "Registro exitoso"
     })
 })
+app.post("/reporte", async (req,resp) => {
+    const dataRequest = req.body
+    const correo = dataRequest.correo
+    const nombre = dataRequest.nombre
+    const telefono = dataRequest.telefono
+    const asunto = dataRequest.asunto
+    const descripcion = dataRequest.descripcion
+    //se necesitaria esto? 
+    const usuario_id = dataRequest.usuario_id
+
+    
+    await reporte.create({
+        correo : correo,
+        nombre : nombre,
+        telefono : telefono,
+        asunto : asunto,
+        descripcion : descripcion,
+        usuario_id : usuario_id,
+    })  
+    resp.send({
+        confirmar: "Reporte enviado correctamente"
+    })
+})
+app.post("/resena", async (req,resp) => {
+    const dataRequest = req.body
+    const puntaje = dataRequest.puntaje
+    const comentario = dataRequest.comentario
+    const video = dataRequest.video
+    const link = dataRequest.link
+    const tipo_resena = dataRequest.tipo_resena
+    const usuario_id = dataRequest.usuario_id
+    await resena.create({
+        puntaje : puntaje,
+        comentario : comentario,
+        video : video,
+        link : link,
+        tipo_resena : tipo_resena,
+        usuario_id : usuario_id,
+    })
+    resp.send({
+        confirmar: "Reseña enviada correctamente"
+    })
+})
+
 
 app.get("/productos", async (req, resp) => {
     const listaproductos = await producto.findAll()
@@ -54,10 +98,20 @@ app.get("/pcarmadas", async (req, resp) => {
     const listapcarmado = await pc_armado.findAll()
     resp.send(listapcarmado)
 })
+app.get("/pcarm_produto", async (req, resp) => {
+    const listapcarm_produto = await pc_armado_producto.findAll()
+    resp.send(listapcarm_produto)
+
+})
 app.get("/historial_compras", async (req, resp) => {
     const listahistorial_compras = await orden_producto.findAll()
     resp.send(listahistorial_compras)
 })
+app.get("/orden", async (req, resp) => {
+    const listaorden = await orden.findAll()
+    resp.send(listaorden)
+    })
+
 
 app.listen(PUERTO, () => {
     console.log(`Servidor web iniciado en puerto ${PUERTO}`)
