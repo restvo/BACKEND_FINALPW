@@ -3,7 +3,7 @@ const bodyParser = require("body-parser")
 const cors = require("cors")
 
 const data = require("./test_data") // importamos data de test
-const { usuario, producto , orden, orden_producto, pcarmado, pcarmado_productos, reporte, reseña} = require("./dao")
+const { usuario, producto , orden , orden_producto, pc_armado, pc_armado_producto, reporte, resena} = require("./dao")
 
 
 const PUERTO = 4447
@@ -22,22 +22,27 @@ app.post("/usuarios", async (req,resp) => {
     const nombre = dataRequest.nombre
     const apellido = dataRequest.apellido
     const correo = dataRequest.correo
-    const c_postal= dataRequest.c_postal
+    const cod_post= dataRequest.cod_post
     const telefono = dataRequest.telefono
     const ciudad = dataRequest.ciudad
+    const departamento = dataRequest.departamento
+    const direccion = dataRequest.direccion
+    const contrasena = dataRequest.contrasena
 
-    await Usuario.create({
-
+    await usuario.create({
         nombre : nombre,
         apellido : apellido,
         correo : correo,
-        c_postal : c_postal,
+        cod_post : cod_post,
         telefono : telefono,
-        ciudad : ciudad
+        ciudad : ciudad,
+        departamento : departamento,
+        direccion : direccion,
+        contrasena : contrasena,
     })
 
     resp.send({
-        error: ""
+        confirmar: "Registro exitoso"
     })
 })
 
@@ -45,7 +50,14 @@ app.get("/productos", async (req, resp) => {
     const listaproductos = await producto.findAll()
     resp.send(listaproductos)
 })
-
+app.get("/pcarmadas", async (req, resp) => {
+    const listapcarmado = await pc_armado.findAll()
+    resp.send(listapcarmado)
+})
+app.get("/historial_compras", async (req, resp) => {
+    const listahistorial_compras = await orden_producto.findAll()
+    resp.send(listahistorial_compras)
+})
 
 app.listen(PUERTO, () => {
     console.log(`Servidor web iniciado en puerto ${PUERTO}`)

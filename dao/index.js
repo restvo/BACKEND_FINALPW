@@ -4,7 +4,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 
 const CADENA_CONEXION = 
-    "postgres://postgres:postgres@localhost:5432/postgres"
+    "postgres://evaluaciones:postgres@localhost:5432/pwfinal"
 
     const sequelize = new Sequelize(CADENA_CONEXION)
 
@@ -20,24 +20,37 @@ const CADENA_CONEXION =
         },
         apellido: {
             type : DataTypes.STRING(200),
-            allowNull : false
+            allowNull : true
         },  
         correo:{
             type : DataTypes.STRING(200),
             allowNull : false
         },
-        c_postal: {
-            type : DataTypes.STRING(200),
+        contrasena:{
+            type: DataTypes.STRING(200),
             allowNull : false
+        },
+        direccion: {
+            type : DataTypes.STRING(200),
+            allowNull : true
+        },
+        departamento: {
+            type : DataTypes.STRING(200),
+            allowNull : true
+        },
+        ciudad: {
+            type :  DataTypes.STRING(200),
+            allowNull : true
+        },
+        cod_post: {
+            type : DataTypes.STRING(200),
+            allowNull : true
         },
         telefono: {
             type : DataTypes.INTEGER,
             allowNull : false
-        },
-        ciudad: {
-            type :  DataTypes.STRING(200),
-            allowNull : false
         }
+
     }, {
         timestamps : false,
         freezeTableName : true
@@ -56,11 +69,11 @@ const CADENA_CONEXION =
             type : DataTypes.INTEGER,
             allowNull : false
         },  
-        categoria:{
+        descripcion: {
             type : DataTypes.STRING(200),
             allowNull : false
         },
-        descripcion: {
+        categoria:{
             type : DataTypes.STRING(200),
             allowNull : false
         }
@@ -76,11 +89,6 @@ const CADENA_CONEXION =
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
-        usuario_id:{
-            type: DataTypes.UUID,
-            defaultValue : Sequelize.UUIDV4,
-            allowNull : false
-        },
         monto:{
             type : DataTypes.INTEGER,
             allowNull : false
@@ -90,7 +98,12 @@ const CADENA_CONEXION =
             allowNull : false
         },
         fecha: {
-            type : DataTypes.STRING(200),
+            type : DataTypes.DATE,
+            allowNull : false
+        },
+        usuario_id:{
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4,
             allowNull : false
         }
     },
@@ -108,7 +121,7 @@ const CADENA_CONEXION =
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
-        productos_id : {
+        producto_id : {
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         }
@@ -117,7 +130,7 @@ const CADENA_CONEXION =
         timestamps : false,
         freezeTableName : true
     })
-    const pcarmado = sequelize.define("pcarmado",{
+    const pc_armado = sequelize.define("pc_armado",{
         id : {
             primaryKey: true,
             type: DataTypes.UUID,
@@ -136,18 +149,18 @@ const CADENA_CONEXION =
         timestamps : false,
         freezeTableName : true
     })
-    const pcarmado_productos = sequelize.define("pcarmado_productos",{
+    const pc_armado_producto = sequelize.define("pc_armado_producto",{
         id: {
             primaryKey: true,
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
-        pcarmado_id: {
+        pc_armado_id: {
             
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
-        productos_id: {
+        producto_id: {
             
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
@@ -160,11 +173,6 @@ const CADENA_CONEXION =
     const reporte =  sequelize.define("reporte",{
         id: {
             primaryKey: true,
-            type: DataTypes.UUID,
-            defaultValue : Sequelize.UUIDV4
-        },
-        usuario_id: {
-            
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
@@ -188,20 +196,20 @@ const CADENA_CONEXION =
             type : DataTypes.STRING(200),
             allowNull : false
         },
+        usuario_id: {
+            
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        }
     },
     {
         timestamps : false,
         freezeTableName : true
     })
 
-    const reseña =  sequelize.define("reseña",{
+    const resena =  sequelize.define("resena",{
         id: {
             primaryKey: true,
-            type: DataTypes.UUID,
-            defaultValue : Sequelize.UUIDV4
-        },
-        usuario_id: {
-            
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
         },
@@ -221,10 +229,15 @@ const CADENA_CONEXION =
             type : DataTypes.STRING(200),
             allowNull : false
         },
-        tipo_reseña:{
+        tipo_resena:{
             type : DataTypes.STRING(200),
             allowNull : false
         },
+        usuario_id: {
+            
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        }
     },
     {
         timestamps : false,
@@ -233,65 +246,56 @@ const CADENA_CONEXION =
 
     //Relaciones
     //reporte *-------->1 usuario
-    reporte.belongsTo(usuario, {
+     reporte.belongsTo(usuario,{
         foreignKey : "usuario_id"
     })
-    usuario.hasMany(reporte, {
+    usuario.hasMany(reporte,{
         foreignKey : "id"
     })
-
-    //reseña*------->1 usuario
-    reseña.belongsTo(usuario, {
+    //resena *-------->1 usuario
+    resena.belongsTo(usuario,{
+        foreignKey : "usuario_id"
+        })
+    usuario.hasMany(resena,{
+        foreignKey : "id"
+    })
+    //orden *-------->1 usuario
+    orden.belongsTo(usuario,{
         foreignKey : "usuario_id"
     })
-    usuario.hasMany(reseña, {
+    usuario.hasMany(orden,{
         foreignKey : "id"
     })
-    
-    //usuario 1 --------> * orden
-    usuario.belongsTo(orden, {
+    //orden_producto *-------->1 orden
+    orden_producto.belongsTo(orden,{
         foreignKey : "orden_id"
     })
-    orden.hasMany(usuario, {
+    orden.hasMany(orden_producto,{
         foreignKey : "id"
     })
-    
-    //orden 1 ---------> * orden_producto
-    orden_producto.belongsTo(orden, {
-        foreignKey : "orden_id"
+    //orden_producto *-------->1 producto
+    orden_producto.belongsTo(producto,{
+        foreignKey : "producto_id"
     })
-    orden.hasMany(orden_producto, {
+    producto.hasMany(orden_producto,{
         foreignKey : "id"
     })
-
-    //producto 1 -------> * orden_producto
-    orden_producto.belongsTo(producto, {
-        foreignKey : "productos_id"
+    //pc_armado_producto *-------->1 producto
+    pc_armado_producto.belongsTo(producto,{
+        foreignKey : "producto_id"
     })
-    orden_producto.hasMany(producto, {
+    producto.hasMany(pc_armado_producto,{
         foreignKey : "id"
     })
-
-    //producto 1 --------> * pcarmado:producto
-    pcarmado_productos.belongsTo(producto, {
-        foreignKey : "productos_id"
+    //pc_armado_producto *-------->1 pc_armado
+    pc_armado_producto.belongsTo(pc_armado,{
+        foreignKey : "pc_armado_id"
     })
-    producto.hasMany(pcarmado_productos, {
+    pc_armado.hasMany(pc_armado_producto,{
         foreignKey : "id"
     })
 
-    //pcarmado_prducto * ---------> 1 pcarmado
-    pcarmado_productos.belongsTo(pcarmado, {
-        foreignKey : "pcarmado_id"
-    })
-    pcarmado.hasMany(pcarmado_productos, {
-        foreignKey : "id"
-    })
-
-    module.exports = {
-        usuario, producto , orden, orden_producto, pcarmado, pcarmado_productos, reporte, reseña
-    }
-
+    module.exports = { usuario, producto, orden, orden_producto, pc_armado, pc_armado_producto, reporte, resena }
 /*
 const CADENA_CONEXION = 
     "postgresql://evaluaciones:evaluaciones@localhost:5432/evaluacionesdb"
@@ -470,4 +474,3 @@ module.exports = {
 }
 */
 
-module.exports = { usuario, producto , orden, orden_producto, pcarmado, pcarmado_productos, reporte, reseña }
