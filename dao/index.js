@@ -164,6 +164,9 @@ const CADENA_CONEXION =
             
             type: DataTypes.UUID,
             defaultValue : Sequelize.UUIDV4
+        },
+        nombre: {
+            type : DataTypes.STRING(200),
         }
     },
     {
@@ -243,7 +246,59 @@ const CADENA_CONEXION =
         timestamps : false,
         freezeTableName : true
     })
-
+    const categoria_prod = sequelize.define("categoria_prod",{
+        id: {
+            primaryKey: true,
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        },
+        nombre:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+    },
+    {
+        timestamps : false,
+        freezeTableName : true
+    })
+    const steam = sequelize.define("steam",{
+        id: {
+            primaryKey: true,
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        },
+        nombre:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+        descripcion:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+    },
+    {
+        timestamps : false,
+        freezeTableName : true
+    })
+    const epic = sequelize.define("epic",{
+        id: {
+            primaryKey: true,
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        },
+        nombre:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+        descripcion:{
+            type : DataTypes.STRING(300),
+            allowNull : false
+        },
+    },
+    {
+        timestamps : false,
+        freezeTableName : true
+    })
     //Relaciones
     //reporte *-------->1 usuario
      reporte.belongsTo(usuario,{
@@ -294,8 +349,15 @@ const CADENA_CONEXION =
     pc_armado.hasMany(pc_armado_producto,{
         foreignKey : "id"
     })
+    //producto *-------->1 categoria_prod
+    producto.belongsTo(categoria_prod,{
+        foreignKey : "categoria_prod_id"
+    })
+    categoria_prod.hasMany(producto,{
+        foreignKey : "id"
+    })
+    module.exports = { usuario, producto, orden, orden_producto, pc_armado, pc_armado_producto, reporte, resena, categoria_prod,epic,steam }
 
-    module.exports = { usuario, producto, orden, orden_producto, pc_armado, pc_armado_producto, reporte, resena }
 /*
 const CADENA_CONEXION = 
     "postgresql://evaluaciones:evaluaciones@localhost:5432/evaluacionesdb"
