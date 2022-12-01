@@ -1,22 +1,17 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require("cors")
-const { Client } = require('pg');
+
 
 const data = require("./test_data") // importamos data de test
 const { usuario, producto , orden , orden_producto, pc_armado, pc_armado_producto, reporte, resena, categoria_prod, epic, steam} = require("./dao")
 
 
-const PUERTO = 4447
+const PUERTO = process.env.PORT || 4447
 
 
-const client = new Client({
-    host: 'localhost',
-    user: 'postgres',
-    database: 'postgres',
-    password: 'postgres',
-    port: 5432,
-});
+
+
 
 
 const app = express()
@@ -128,38 +123,6 @@ app.post("/usuarios", async (req,resp) => {
     })
 })
 
-
-
-/*
-app.post("/usuarios", async (req,resp) => {
-    const dataRequest = req.body
-    const nombre = dataRequest.nombre
-    const apellido = dataRequest.apellido
-    const correo = dataRequest.correo
-    const cod_post= dataRequest.cod_post
-    const telefono = dataRequest.telefono
-    const ciudad = dataRequest.ciudad
-    const departamento = dataRequest.departamento
-    const direccion = dataRequest.direccion
-    const contrasena = dataRequest.contrasena
-
-    await usuario.create({
-        nombre : nombre,
-        apellido : apellido,
-        correo : correo,
-        cod_post : cod_post,
-        telefono : telefono,
-        ciudad : ciudad,
-        departamento : departamento,
-        direccion : direccion,
-        contrasena : contrasena,
-    })
-
-    resp.send({
-        confirmar: "Registro exitoso"
-    })
-})
-*/
 app.post("/reporte", async (req,resp) => {
     const dataRequest = req.body
     const correo = dataRequest.correo
@@ -203,7 +166,22 @@ app.post("/resena", async (req,resp) => {
         confirmar: "Reseña enviada correctamente"
     })
 })
+app.get("/resenas", async (req, resp) => {
+    const usuarioId = req.query.usuario
+    if (usuarioId == undefined || usuarioId === "-1"){
+        const listaResenas = await resena.findAll()
+        resp.send(listaResenas)
+    }else {
+        const resenasFiltradas = await resena.findAll({
+            where : {
+                usuario_id : usuarioId
+            }
+        })
+        resp.send(resenasFiltradas)
+    }
+    })
 
+/*
 app.get("/productos_ranking", async (req, resp) => {
     await client.connect()
     //const listaproductos = await producto.findAll()
@@ -213,14 +191,27 @@ app.get("/productos_ranking", async (req, resp) => {
   
     resp.send(listaproductos)
   })
-  
+  */
+  //metodo Alonso
+  app.get("/productosA", async (req, resp) => {
+    //await client.connect()
+    const listaproductos = await producto.findAll()
+    /*
+    const listaproductos = await client.query(
+      'SELECT * FROM producto ORDER BY uvendidas DESC'
+    )*/
+    resp.send(listaproductos)
+  })
 
 app.get("/productos", async (req, resp) => {
     const categoria_prod_id = req.query.categoria_prod
     if (categoria_prod_id == undefined || categoria_prod_id == "-1"){
 
-        const listaproductos = await producto.findAll()
-
+        const listaproductos = await producto.findAll(
+            {
+                where : { categoria_prod_id : null}
+            }
+        )
         resp.send(listaproductos)
     }else{
         const productosFiltrados = await producto.findAll({
@@ -231,11 +222,15 @@ app.get("/productos", async (req, resp) => {
         resp.send(productosFiltrados)
     }
 })
+
 app.get("/pcxcomponentes", async (req, resp) => {
     const pc_armado_id = req.query.pc_armado_producto
     if (pc_armado_id == undefined || pc_armado_id == "-1"){
 
-        const listaproductoxarmada = await producto.findAll()
+        const listaproductoxarmada = await producto.findAll(
+            { where: { pc_armado_id: null } }
+            
+        )
         resp.send(listaproductoxarmada)
     }else{
         const productosxarmadaFiltrados = await producto.findAll({
@@ -247,6 +242,50 @@ app.get("/pcxcomponentes", async (req, resp) => {
     }
 
 })
+
+//metodo de Alonso raro
+app.get("/pcarmado", async (req, resp) => {
+    const desc = req.query.descripcion
+    const tipoC = req.query.tipo
+    console.log(desc + " " + tipoC)
+  
+    if ((tipoC == undefined || tipoC === "-1") && (desc == undefined || desc === "-1")) {
+      console.log("No se activaron filtros")
+      const listapcarmado = await pcarmado.findAll()
+      resp.send(listapcarmado)
+    } else {
+      if ((desc == undefined || desc === "-1") && (tipoC != undefined || tipoC !== "-1")) {
+        console.log("Se activo filtro tipo")
+        const listapcarmado = await pcarmado.findAll({
+          where: {
+            tipo_id: tipoC
+          }
+        })
+        resp.send(listapcarmado)
+      } else {
+        if ((desc != undefined || desc !== "-1") && (tipoC == undefined || tipoC === "-1")) {
+          console.log("Se activo filtro descripcion")
+          const listapcarmado = await pcarmado.findAll({
+            where: {
+              descripcion_id: desc
+            }
+          })
+          resp.send(listapcarmado)
+        } else {
+          if ((desc != undefined || desc !== "-1") && (tipoC != undefined || tipoC !== "-1")) {
+            console.log("Se activaron ambos filtros")
+            const listapcarmado = await pcarmado.findAll({
+              where: {
+                descripcion_id: desc,
+                tipo_id: tipoC
+              }
+            })
+            resp.send(listapcarmado)
+          }
+        }
+      }
+    }
+  })
 app.get("/pcarmadas", async (req, resp) => {
     const listapcarmado = await pc_armado.findAll()
     resp.send(listapcarmado)

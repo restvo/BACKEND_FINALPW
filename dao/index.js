@@ -3,10 +3,18 @@ const { Sequelize, DataTypes } = require("sequelize");
 // postgres://<USUARIO>:<PASSWORD>@<URL_HOST_BD>:<PUERTO_BD>/<NOMBRE_BD>
 
 
+
 const CADENA_CONEXION = 
     "postgres://evaluaciones:postgres@localhost:5432/pwfinal"
 
-    const sequelize = new Sequelize(CADENA_CONEXION)
+const sequelize = new Sequelize(CADENA_CONEXION, {
+        dialectOptions: {
+            ssl : {
+                require : true,
+                rejectUnauthorized : false
+            }
+        }
+    })
 
     const usuario = sequelize.define("usuario", {
         id : {
@@ -76,6 +84,10 @@ const CADENA_CONEXION =
         categoria:{
             type : DataTypes.STRING(200),
             allowNull : false
+        },
+        u_vendidas:{
+            type : DataTypes.STRING(200),
+            allowNull : true
         }
     },
     {
@@ -299,6 +311,41 @@ const CADENA_CONEXION =
         timestamps : false,
         freezeTableName : true
     })
+    const tipo = sequelize.define("tipo",{
+        id: {
+            primaryKey: true,
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        },
+        nombre:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+    },
+    {
+        timestamps : false,
+        freezeTableName : true
+    })
+    const descripcion = sequelize.define("descripcion",{
+        id: {
+            primaryKey: true,
+            type: DataTypes.UUID,
+            defaultValue : Sequelize.UUIDV4
+        },
+        nombre:{
+            type : DataTypes.STRING(200),
+            allowNull : false
+        },
+    },
+    {
+        timestamps : false,
+        freezeTableName : true
+    })
+
+  
+  
+  
+  
     //Relaciones
     //reporte *-------->1 usuario
      reporte.belongsTo(usuario,{
