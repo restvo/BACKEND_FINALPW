@@ -10,10 +10,6 @@ const { usuario, producto , orden , orden_producto, pc_armado, pc_armado_product
 const PUERTO = process.env.PORT || 4447
 
 
-
-
-
-
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
