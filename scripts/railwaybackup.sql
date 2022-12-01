@@ -5,8 +5,6 @@
 -- Dumped from database version 14.4
 -- Dumped by pg_dump version 14.4
 
--- Started on 2022-11-23 01:01:37
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -23,7 +21,31 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 211 (class 1259 OID 49167)
+-- Name: categoria_prod; Type: TABLE; Schema: public; Owner: evaluaciones
+--
+
+CREATE TABLE public.categoria_prod (
+    id uuid NOT NULL,
+    nombre character varying(150)
+);
+
+
+ALTER TABLE public.categoria_prod OWNER TO evaluaciones;
+
+--
+-- Name: epic; Type: TABLE; Schema: public; Owner: evaluaciones
+--
+
+CREATE TABLE public.epic (
+    id uuid NOT NULL,
+    nombre character varying(50),
+    descripcion character varying(300)
+);
+
+
+ALTER TABLE public.epic OWNER TO evaluaciones;
+
+--
 -- Name: orden; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -39,7 +61,6 @@ CREATE TABLE public.orden (
 ALTER TABLE public.orden OWNER TO evaluaciones;
 
 --
--- TOC entry 215 (class 1259 OID 49208)
 -- Name: orden_producto; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -53,7 +74,6 @@ CREATE TABLE public.orden_producto (
 ALTER TABLE public.orden_producto OWNER TO postgres;
 
 --
--- TOC entry 213 (class 1259 OID 49181)
 -- Name: pc_armado; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -67,21 +87,20 @@ CREATE TABLE public.pc_armado (
 ALTER TABLE public.pc_armado OWNER TO evaluaciones;
 
 --
--- TOC entry 216 (class 1259 OID 49223)
 -- Name: pc_armado_producto; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
 CREATE TABLE public.pc_armado_producto (
     id uuid NOT NULL,
     pc_armado_id uuid,
-    producto_id uuid
+    producto_id uuid,
+    nombre character varying(150)
 );
 
 
 ALTER TABLE public.pc_armado_producto OWNER TO evaluaciones;
 
 --
--- TOC entry 212 (class 1259 OID 49174)
 -- Name: producto; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -90,14 +109,18 @@ CREATE TABLE public.producto (
     nombre character varying,
     precio character varying,
     descripcion character varying,
-    categoria character varying
+    categoria character varying,
+    categoria_prod_id uuid,
+    pc_armado_id uuid,
+    u_vendidas character varying,
+    fk_tipo uuid,
+    fk_descripcion uuid
 );
 
 
 ALTER TABLE public.producto OWNER TO evaluaciones;
 
 --
--- TOC entry 210 (class 1259 OID 49160)
 -- Name: reporte; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -115,7 +138,6 @@ CREATE TABLE public.reporte (
 ALTER TABLE public.reporte OWNER TO evaluaciones;
 
 --
--- TOC entry 214 (class 1259 OID 49186)
 -- Name: resena; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -133,7 +155,31 @@ CREATE TABLE public.resena (
 ALTER TABLE public.resena OWNER TO evaluaciones;
 
 --
--- TOC entry 209 (class 1259 OID 49153)
+-- Name: steam; Type: TABLE; Schema: public; Owner: evaluaciones
+--
+
+CREATE TABLE public.steam (
+    id uuid NOT NULL,
+    nombre character varying(50),
+    descripcion character varying(300)
+);
+
+
+ALTER TABLE public.steam OWNER TO evaluaciones;
+
+--
+-- Name: tipo; Type: TABLE; Schema: public; Owner: evaluaciones
+--
+
+CREATE TABLE public.tipo (
+    id uuid NOT NULL,
+    nombre character varying
+);
+
+
+ALTER TABLE public.tipo OWNER TO evaluaciones;
+
+--
 -- Name: usuario; Type: TABLE; Schema: public; Owner: evaluaciones
 --
 
@@ -154,7 +200,22 @@ CREATE TABLE public.usuario (
 ALTER TABLE public.usuario OWNER TO evaluaciones;
 
 --
--- TOC entry 3196 (class 2606 OID 49173)
+-- Name: categoria_prod categorías_prod_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
+--
+
+ALTER TABLE ONLY public.categoria_prod
+    ADD CONSTRAINT "categorías_prod_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: epic epic_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
+--
+
+ALTER TABLE ONLY public.epic
+    ADD CONSTRAINT epic_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: orden orden_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -163,7 +224,6 @@ ALTER TABLE ONLY public.orden
 
 
 --
--- TOC entry 3204 (class 2606 OID 49212)
 -- Name: orden_producto orden_producto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -172,7 +232,6 @@ ALTER TABLE ONLY public.orden_producto
 
 
 --
--- TOC entry 3200 (class 2606 OID 49185)
 -- Name: pc_armado pc_armado_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -181,7 +240,6 @@ ALTER TABLE ONLY public.pc_armado
 
 
 --
--- TOC entry 3206 (class 2606 OID 49227)
 -- Name: pc_armado_producto pc_armado_producto_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -190,7 +248,6 @@ ALTER TABLE ONLY public.pc_armado_producto
 
 
 --
--- TOC entry 3198 (class 2606 OID 49180)
 -- Name: producto producto_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -199,7 +256,6 @@ ALTER TABLE ONLY public.producto
 
 
 --
--- TOC entry 3194 (class 2606 OID 49166)
 -- Name: reporte reporte_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -208,7 +264,6 @@ ALTER TABLE ONLY public.reporte
 
 
 --
--- TOC entry 3202 (class 2606 OID 49192)
 -- Name: resena resena_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -217,7 +272,22 @@ ALTER TABLE ONLY public.resena
 
 
 --
--- TOC entry 3192 (class 2606 OID 49159)
+-- Name: steam steam_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
+--
+
+ALTER TABLE ONLY public.steam
+    ADD CONSTRAINT steam_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tipo tipo_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
+--
+
+ALTER TABLE ONLY public.tipo
+    ADD CONSTRAINT tipo_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: usuario usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -226,7 +296,14 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 3208 (class 2606 OID 49203)
+-- Name: producto fk_categoria_prod; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
+--
+
+ALTER TABLE ONLY public.producto
+    ADD CONSTRAINT fk_categoria_prod FOREIGN KEY (categoria_prod_id) REFERENCES public.categoria_prod(id) NOT VALID;
+
+
+--
 -- Name: orden fk_orden_usuario; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -235,7 +312,6 @@ ALTER TABLE ONLY public.orden
 
 
 --
--- TOC entry 3210 (class 2606 OID 49213)
 -- Name: orden_producto fk_ordenproducto_orden; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -244,7 +320,6 @@ ALTER TABLE ONLY public.orden_producto
 
 
 --
--- TOC entry 3211 (class 2606 OID 49218)
 -- Name: orden_producto fk_ordenproducto_producto; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -253,7 +328,6 @@ ALTER TABLE ONLY public.orden_producto
 
 
 --
--- TOC entry 3212 (class 2606 OID 49228)
 -- Name: pc_armado_producto fk_pcarmadoproducto_pcarmado; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -262,7 +336,6 @@ ALTER TABLE ONLY public.pc_armado_producto
 
 
 --
--- TOC entry 3213 (class 2606 OID 49233)
 -- Name: pc_armado_producto fk_pcarmadoproducto_producto; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -271,7 +344,6 @@ ALTER TABLE ONLY public.pc_armado_producto
 
 
 --
--- TOC entry 3207 (class 2606 OID 49193)
 -- Name: reporte fk_reporte_usuario; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
@@ -280,15 +352,12 @@ ALTER TABLE ONLY public.reporte
 
 
 --
--- TOC entry 3209 (class 2606 OID 49198)
 -- Name: resena fk_resena_usuario; Type: FK CONSTRAINT; Schema: public; Owner: evaluaciones
 --
 
 ALTER TABLE ONLY public.resena
     ADD CONSTRAINT fk_resena_usuario FOREIGN KEY (usuario_id) REFERENCES public.usuario(id) NOT VALID;
 
-
--- Completed on 2022-11-23 01:01:37
 
 --
 -- PostgreSQL database dump complete
