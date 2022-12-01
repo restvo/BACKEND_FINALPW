@@ -7,14 +7,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const CADENA_CONEXION = 
     "postgres://evaluaciones:postgres@localhost:5432/pwfinal"
 
-const sequelize = new Sequelize(CADENA_CONEXION, {
-        dialectOptions: {
-            ssl : {
-                require : true,
-                rejectUnauthorized : false
-            }
-        }
-    })
+const sequelize = new Sequelize(CADENA_CONEXION)
 
     const usuario = sequelize.define("usuario", {
         id : {

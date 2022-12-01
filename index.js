@@ -7,7 +7,7 @@ const data = require("./test_data") // importamos data de test
 const { usuario, producto , orden , orden_producto, pc_armado, pc_armado_producto, reporte, resena, categoria_prod, epic, steam} = require("./dao")
 
 
-const PUERTO = process.env.PORT || 4447
+const PUERTO = 4447
 
 
 const app = express()
